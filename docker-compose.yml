@@ -48,20 +48,25 @@ services:
       - API_BASE=http://orchestrator:8000
       - GUARDIAN_HEALTH_URL=http://guardian:8787/health
       - LOG_DIR=/data/telemetry
-      - OLLAMA_BASE_URL=http://host.docker.internal:11434
-      - OLLAMA_HOST=http://host.docker.internal:11434
-      - MICRO_MODEL=qwen2.5:3b
-      - MICRO_DRIVER_VERSION=2
-      - FEATURE_MICRO_MOCK=0
-      - MICRO_MAX_SHARE=0.2
-      - LLM_PLANNER=qwen2.5:3b-instruct-q4_K_M
+      # Gemini Cloud (primary)
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - VOICE_SERVICE_URL=http://voice-gemini:8002
+      - PRIMARY_LLM=gemini
+      # Legacy Ollama (disabled - kept for fallback)
+      # - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # - OLLAMA_HOST=http://host.docker.internal:11434
+      # - MICRO_MODEL=qwen2.5:3b
+      # - MICRO_DRIVER_VERSION=2
+      - FEATURE_MICRO_MOCK=1
+      - MICRO_MAX_SHARE=0.0
+      # - LLM_PLANNER=qwen2.5:3b-instruct-q4_K_M
       - PLANNER_TIMEOUT_MS=3000
       - PLANNER_REPAIR_TIMEOUT_MS=1000
       - LLM_TIMEOUT_MS=5000
       - MICRO_TIMEOUT_MS=800
-      - PLANNER_NUM_CTX=768
-      - PLANNER_NUM_PREDICT=80
-      - OLLAMA_KEEP_ALIVE=30m
+      # - PLANNER_NUM_CTX=768
+      # - PLANNER_NUM_PREDICT=80
+      # - OLLAMA_KEEP_ALIVE=30m
       - SECURITY_ENFORCE=true
       - PLANNER_DEBUG_DUMP=1
       - PLANNER_DEBUG_DIR=data/telemetry/planner_raw
@@ -93,6 +98,30 @@ services:
       timeout: 5s
       retries: 20
       start_period: 15s
+
+  voice-gemini:
+    build:
+      context: ./services/voice-gemini
+      dockerfile: Dockerfile
+    container_name: alice-voice
+    depends_on:
+      orchestrator:
+        condition: service_healthy
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - ORCHESTRATOR_URL=http://orchestrator:8000
+    ports:
+      - "8002:8002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   alice-cache:
     image: redis:7-alpine

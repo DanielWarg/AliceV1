@@ -38,3 +38,9 @@ mypy==1.14.1
 
 # API generation
 openapi-generator-cli==7.10.0
+
+# Smart Home (Lexi integration)
+python-kasa>=0.5.0
+
+# Web Automation (Lexi integration)
+playwright>=1.40.0

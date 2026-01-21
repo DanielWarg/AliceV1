@@ -25,6 +25,8 @@ from src.routers import (
 )
 from src.routers.monitoring import router as monitoring_router
 from src.routers.optimized_orchestrator import router as optimized_router
+from src.routers.smart_home import router as smart_home_router
+from src.routers.web_agent import router as web_agent_router
 from src.security.metrics import set_mode
 from src.security.policy import load_policy
 from src.security.router import router as security_router
@@ -199,6 +201,10 @@ app.include_router(fix_status_router)
 # Include OPTIMIZED routers - THE GRYM SAUCE! 🚀
 app.include_router(optimized_router, tags=["optimized"])  # Optimized orchestrator
 app.include_router(monitoring_router, tags=["monitoring"])  # Performance monitoring
+
+# Include HYBRID routers (Lexi integration) 🔗
+app.include_router(smart_home_router, tags=["smart-home"])  # Kasa smart home
+app.include_router(web_agent_router, tags=["web-agent"])  # Playwright automation
 
 
 # Root endpoint

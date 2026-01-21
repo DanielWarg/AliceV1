@@ -1,5 +1,5 @@
-import AliceHUD from '../components/AliceHUD'
+import VoicePanel from '../components/VoicePanel';
 
-export default function HomePage() {
-  return <AliceHUD />
+export default function Home() {
+  return <VoicePanel />;
 }
