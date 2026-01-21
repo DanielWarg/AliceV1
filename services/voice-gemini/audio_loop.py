@@ -28,9 +28,9 @@ if sys.version_info < (3, 11, 0):
 # Audio Configuration
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-SEND_SAMPLE_RATE = 16000
+SEND_SAMPLE_RATE = 24000
 RECEIVE_SAMPLE_RATE = 24000
-CHUNK_SIZE = 1024
+CHUNK_SIZE = 512
 
 # Model Configuration
 MODEL = "models/gemini-2.5-flash-native-audio-preview-12-2025"
